@@ -23,3 +23,14 @@ def create_actionable_df(X_act: pd.DataFrame, y: pd.Series) -> pd.DataFrame:
     df_act = X_act.assign(y=y)
     df_act = df_act.drop_duplicates()
     return df_act
+
+def remove_duplicates(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Remove duplicate rows and return cleaned dataframe
+    """
+    before = df.shape[0]
+    df_clean = df.drop_duplicates()
+    after = df_clean.shape[0]
+
+    print(f"Duplicates removed: {before - after}")
+    return df_clean
