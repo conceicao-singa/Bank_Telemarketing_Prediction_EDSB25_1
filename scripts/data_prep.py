@@ -89,7 +89,7 @@ def get_features_to_keep(df: pd.DataFrame, features_to_drop=None) -> list:
 
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
-import pandas as pd
+
 
 def split_features_target(df: pd.DataFrame, target_col: str = "y"):
     """Split dataframe into features (X) and target (y)."""
@@ -129,3 +129,29 @@ def preprocess_data(X_train, X_test, preprocessor):
     X_train_processed = preprocessor.fit_transform(X_train)
     X_test_processed = preprocessor.transform(X_test)
     return X_train_processed, X_test_processed
+
+## Outlier Removal Function Using IQR Method
+def remove_outliers_iqr(df: pd.DataFrame, column: str, lower_quantile: float = 0.10, upper_quantile: float = 0.90) -> pd.DataFrame:
+    """
+    Remove outliers from a column using IQR method based on specified quantiles.
+    
+    Parameters:
+        df (pd.DataFrame): Input dataframe.
+        column (str): Column to filter.
+        lower_quantile (float): Lower quantile threshold (default 0.10).
+        upper_quantile (float): Upper quantile threshold (default 0.90).
+    
+    Returns:
+        pd.DataFrame: Filtered dataframe with outliers removed.
+    """
+    Q1 = df[column].quantile(lower_quantile)
+    Q3 = df[column].quantile(upper_quantile)
+    IQR = Q3 - Q1
+
+    lower_bound = Q1 - 1.5 * IQR
+    upper_bound = Q3 + 1.5 * IQR
+
+    outliers = df[(df[column] < lower_bound) | (df[column] > upper_bound)]
+    print(f"{column}: Removed {outliers.shape[0]} outliers")
+
+    return df[(df[column] >= lower_bound) & (df[column] <= upper_bound)]
