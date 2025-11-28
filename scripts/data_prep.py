@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 def clean_column_names(df: pd.DataFrame) -> pd.DataFrame:
     df.columns = [c.strip().replace('.', '_') for c in df.columns]
@@ -25,12 +26,60 @@ def create_actionable_df(X_act: pd.DataFrame, y: pd.Series) -> pd.DataFrame:
     return df_act
 
 def remove_duplicates(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Remove duplicate rows and return cleaned dataframe
-    """
+    """Remove duplicate rows and return cleaned dataframe"""
     before = df.shape[0]
     df_clean = df.drop_duplicates()
     after = df_clean.shape[0]
-
     print(f"Duplicates removed: {before - after}")
     return df_clean
+
+
+def add_age_group(df: pd.DataFrame) -> pd.DataFrame:
+    """Create an 'age_group' feature by binning age into categories."""
+    bins = [0, 25, 50, 75, 100]
+    labels = ['youth', 'adult', 'senior', 'elderly']
+    df['age_group'] = pd.cut(df['age'], bins=bins, labels=labels, right=False)
+    return df
+
+
+def add_housing_loan_interaction(df: pd.DataFrame) -> pd.DataFrame:
+    """Create an interaction term between housing and loan features."""
+    df['housing_loan_interaction'] = df['housing'] + '_' + df['loan']
+    return df
+
+
+def impute_marital_unknown(df: pd.DataFrame) -> pd.DataFrame:
+    """Replace 'unknown' values in marital column with the mode."""
+    mode_val = df['marital'].mode().iloc[0]
+    df['marital'] = df['marital'].replace('unknown', mode_val)
+    return df
+
+
+def transform_pdays(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Replace 999 in 'pdays' with 'never_contacted' and bin remaining values.
+    Creates a categorical feature 'pdays_cat' and drops original 'pdays'.
+    """
+    df['pdays_cat'] = df['pdays']
+    df['pdays_cat'] = df['pdays_cat'].replace(999, 'never_contacted')
+
+    mask = df['pdays_cat'] != 'never_contacted'
+    df.loc[mask, 'pdays_cat'] = pd.cut(
+        df.loc[mask, 'pdays_cat'].astype(int),
+        bins=[-1, 3, 7, 15, np.inf],
+        labels=['0-3', '4-7', '8-15', '16+']
+    )
+
+    df['pdays_cat'] = df['pdays_cat'].astype('category')
+    df = df.drop(columns=['pdays'])
+    return df
+
+
+def get_features_to_keep(df: pd.DataFrame, features_to_drop=None) -> list:
+    """
+    Return list of features to keep, excluding specified features and target 'y'.
+    """
+    if features_to_drop is None:
+        features_to_drop = ['default']
+    features_to_keep = [col for col in df.columns if col not in features_to_drop + ['y']]
+    return features_to_keep
