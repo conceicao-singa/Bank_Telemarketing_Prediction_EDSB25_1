@@ -131,6 +131,7 @@ def preprocess_data(X_train, X_test, preprocessor):
     return X_train_processed, X_test_processed
 
 ## Outlier Removal Function Using IQR Method
+
 def remove_outliers_iqr(df: pd.DataFrame, column: str, lower_quantile: float = 0.10, upper_quantile: float = 0.90) -> pd.DataFrame:
     """
     Remove outliers from a column using IQR method based on specified quantiles.
