@@ -83,3 +83,49 @@ def get_features_to_keep(df: pd.DataFrame, features_to_drop=None) -> list:
         features_to_drop = ['default']
     features_to_keep = [col for col in df.columns if col not in features_to_drop + ['y']]
     return features_to_keep
+
+
+
+
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+import pandas as pd
+
+def split_features_target(df: pd.DataFrame, target_col: str = "y"):
+    """Split dataframe into features (X) and target (y)."""
+    X = df.drop(columns=target_col)
+    y = df[target_col]
+    return X, y
+
+
+def get_column_types(X: pd.DataFrame):
+    """Identify numerical and categorical columns."""
+    numerical_cols = X.select_dtypes(include=["int64", "float64"]).columns.tolist()
+    categorical_cols = X.select_dtypes(include=["object", "category"]).columns.tolist()
+    return numerical_cols, categorical_cols
+
+
+def build_preprocessor(numerical_cols, categorical_cols):
+    """Create a ColumnTransformer with scaling and one-hot encoding."""
+    preprocessor = ColumnTransformer(
+        transformers=[
+            ("num", StandardScaler(), numerical_cols),
+            ("cat", OneHotEncoder(handle_unknown="ignore"), categorical_cols),
+        ]
+    )
+    return preprocessor
+
+
+def time_based_split(X: pd.DataFrame, y: pd.Series, train_ratio: float = 0.8):
+    """Perform a time-based split of features and target."""
+    train_size = int(len(X) * train_ratio)
+    X_train, X_test = X.iloc[:train_size], X.iloc[train_size:]
+    y_train, y_test = y.iloc[:train_size], y.iloc[train_size:]
+    return X_train, X_test, y_train, y_test
+
+
+def preprocess_data(X_train, X_test, preprocessor):
+    """Fit preprocessor on training data and transform both train and test sets."""
+    X_train_processed = preprocessor.fit_transform(X_train)
+    X_test_processed = preprocessor.transform(X_test)
+    return X_train_processed, X_test_processed
