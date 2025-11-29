@@ -144,3 +144,4 @@ def remove_outliers_iqr(df: pd.DataFrame, column: str, lower_quantile: float = 0
     print(f"{column}: Removed {outliers.shape[0]} outliers")
 
     return df[(df[column] >= lower_bound) & (df[column] <= upper_bound)]
+
