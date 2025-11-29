@@ -136,6 +136,7 @@ def evaluate_tree_cv(pipe, X, y, n_splits: int = 5, scoring: str = "roc_auc"):
 
 
 def train_and_evaluate_tree(pipe, X_train, y_train, X_test, y_test, threshold: float = 0.5):
+    
     """Train Decision Tree pipeline and evaluate on test set."""
     pipe.fit(X_train, y_train)
     y_proba = pipe.predict_proba(X_test)[:, 1]
@@ -153,4 +154,43 @@ def train_and_evaluate_tree(pipe, X_train, y_train, X_test, y_test, threshold: f
     for k, v in metrics.items():
         print(f"{k.capitalize():<10}: {v:.4f}")
 
+    return metrics
+
+    """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+    # Random Forest Training and Evaluation Modules
+    """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+from sklearn.ensemble import RandomForestClassifier
+def build_rf_pipeline(n_estimators=200, random_state=42):
+    return Pipeline([
+        ("smote", SMOTE(sampling_strategy="minority", random_state=random_state)),
+        ("model", RandomForestClassifier(n_estimators=n_estimators, random_state=random_state))
+    ])
+
+# 2. Cross-validation evaluation
+# -----------------------------
+def evaluate_cv(pipeline, X, y, cv_splits=5, scoring="roc_auc"):
+    tscv = TimeSeriesSplit(n_splits=cv_splits)
+    cv_scores = cross_val_score(pipeline, X, y, cv=tscv, scoring=scoring)
+    print(f"CV {scoring.upper()}: {cv_scores.mean():.4f}")
+    return cv_scores
+
+# -----------------------------
+# 3. Test set evaluation
+# -----------------------------
+def evaluate_test(pipeline, X_train, y_train, X_test, y_test):
+    pipeline.fit(X_train, y_train)
+    y_pred = pipeline.predict(X_test)
+    y_proba = pipeline.predict_proba(X_test)[:, 1]
+
+    metrics = {
+        "Accuracy": accuracy_score(y_test, y_pred),
+        "Precision": precision_score(y_test, y_pred),
+        "Recall": recall_score(y_test, y_pred),
+        "F1": f1_score(y_test, y_pred),
+        "ROC-AUC": roc_auc_score(y_test, y_proba)
+    }
+
+    print("\nTest Results:")
+    for k, v in metrics.items():
+        print(f"{k}: {v:.4f}")
     return metrics
