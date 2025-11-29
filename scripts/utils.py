@@ -24,8 +24,8 @@ def save_processed_splits(X_train, y_train, X_test, y_test, preprocessor, path: 
     X_test_df  = pd.DataFrame(X_test, columns=feature_names)
 
     # Ensure y is a Series
-    y_train_df = pd.Series(y_train, name="target").reset_index(drop=True)
-    y_test_df  = pd.Series(y_test, name="target").reset_index(drop=True)
+    y_train_df = pd.Series(y_train, name="y").reset_index(drop=True)
+    y_test_df  = pd.Series(y_test, name="y").reset_index(drop=True)
 
     # Concatenate features + target
     train_final = pd.concat([X_train_df, y_train_df], axis=1)
