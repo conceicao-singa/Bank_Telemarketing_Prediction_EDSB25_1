@@ -101,3 +101,56 @@ def run_grid_search(pipe, param_grid, X_train, y_train, X_test, y_test, cv, scor
         "f1": f1_score(y_test, y_pred),
         "roc_auc": roc_auc_score(y_test, y_proba)
     }
+    
+    """""""""""""""""""""""""""""""""""""""""""""""
+    Decision Trees Training and Evaluation Modules  
+    """""""""""""""""""""""""""""""""""""""""""""""
+    
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import cross_val_score, TimeSeriesSplit
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
+from imblearn.pipeline import Pipeline
+from imblearn.over_sampling import SMOTE
+import numpy as np
+
+def build_tree_pipeline(random_state: int = 42):
+    """Create a pipeline with SMOTE and Decision Tree."""
+    pipe = Pipeline([
+        ("smote", SMOTE(sampling_strategy='minority', random_state=random_state)),
+        ("model", DecisionTreeClassifier(random_state=random_state))
+    ])
+    return pipe
+
+
+def evaluate_tree_cv(pipe, X, y, n_splits: int = 5, scoring: str = "roc_auc"):
+    """Run time-series cross-validation and print ROC-AUC for each fold + mean score."""
+    tscv = TimeSeriesSplit(n_splits=n_splits)
+    cv_scores = cross_val_score(pipe, X, y, cv=tscv, scoring=scoring)
+
+    print("ROC-AUC for each fold:")
+    for i, score in enumerate(cv_scores, 1):
+        print(f"  Fold {i}: {score:.4f}")
+    print(f"\nMean CV ROC-AUC: {cv_scores.mean():.4f}")
+
+    return cv_scores
+
+
+def train_and_evaluate_tree(pipe, X_train, y_train, X_test, y_test, threshold: float = 0.5):
+    """Train Decision Tree pipeline and evaluate on test set."""
+    pipe.fit(X_train, y_train)
+    y_proba = pipe.predict_proba(X_test)[:, 1]
+    y_pred = (y_proba >= threshold).astype(int)
+
+    metrics = {
+        "accuracy": accuracy_score(y_test, y_pred),
+        "precision": precision_score(y_test, y_pred, zero_division=0),
+        "recall": recall_score(y_test, y_pred, zero_division=0),
+        "f1": f1_score(y_test, y_pred, zero_division=0),
+        "roc_auc": roc_auc_score(y_test, y_proba)
+    }
+
+    print("\nTest Results:")
+    for k, v in metrics.items():
+        print(f"{k.capitalize():<10}: {v:.4f}")
+
+    return metrics
