@@ -194,3 +194,20 @@ def evaluate_test(pipeline, X_train, y_train, X_test, y_test):
     for k, v in metrics.items():
         print(f"{k}: {v:.4f}")
     return metrics
+
+
+    """""""""""""""""""""""""""""""""""""""""""""""
+    Support Vector Machine and Evaluation Modules  
+    """""""""""""""""""""""""""""""""""""""""""""""
+
+
+# -----------------------------
+# 1. Build pipeline
+# -----------------------------
+def build_svm_pipeline(kernel="rbf", probability=True, random_state=42):
+    return Pipeline([
+        ("smote", SMOTE(random_state=random_state)),
+        ("model", SVC(kernel=kernel, probability=probability, random_state=random_state))
+    ])
+
+
