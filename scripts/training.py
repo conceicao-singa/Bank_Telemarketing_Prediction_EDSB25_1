@@ -122,7 +122,7 @@ def build_tree_pipeline(random_state: int = 42):
     return pipe
 
 
-def evaluate_tree_cv(pipe, X, y, n_splits: int = 5, scoring: str = "roc_auc"):
+def evaluate_cv(pipe, X, y, n_splits: int = 5, scoring: str = "roc_auc"):
     """Run time-series cross-validation and print ROC-AUC for each fold + mean score."""
     tscv = TimeSeriesSplit(n_splits=n_splits)
     cv_scores = cross_val_score(pipe, X, y, cv=tscv, scoring=scoring)
