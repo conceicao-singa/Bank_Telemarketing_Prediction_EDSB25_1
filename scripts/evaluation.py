@@ -8,6 +8,26 @@ import pandas as pd
 
 sns.set(style="whitegrid")  # global seaborn style
 
+def evaluate_cv_test(pipeline, X_train, y_train, X_test, y_test):
+    pipeline.fit(X_train, y_train)
+    y_pred = pipeline.predict(X_test)
+    y_proba = pipeline.predict_proba(X_test)[:, 1]
+
+    metrics = {
+        "Accuracy": accuracy_score(y_test, y_pred),
+        "Precision": precision_score(y_test, y_pred),
+        "Recall": recall_score(y_test, y_pred),
+        "F1": f1_score(y_test, y_pred),
+        "ROC-AUC": roc_auc_score(y_test, y_proba)
+    }
+
+    print("\nTest Results:")
+    for k, v in metrics.items():
+        print(f"{k}: {v:.4f}")
+    return metrics
+
+
+
 def evaluate_model(pipe, X_train, y_train, X_test, y_test, model_name="Model", threshold=0.5):
     print(f"\n==================== {model_name} — TRAINING vs TEST EVALUATION ====================\n")
 

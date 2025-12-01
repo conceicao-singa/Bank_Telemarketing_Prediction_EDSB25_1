@@ -122,18 +122,6 @@ def build_tree_pipeline(random_state: int = 42):
     return pipe
 
 
-def evaluate_cv(pipe, X, y, n_splits: int = 5, scoring: str = "roc_auc"):
-    """Run time-series cross-validation and print ROC-AUC for each fold + mean score."""
-    tscv = TimeSeriesSplit(n_splits=n_splits)
-    cv_scores = cross_val_score(pipe, X, y, cv=tscv, scoring=scoring)
-
-    print("ROC-AUC for each fold:")
-    for i, score in enumerate(cv_scores, 1):
-        print(f"  Fold {i}: {score:.4f}")
-    print(f"\nMean CV ROC-AUC: {cv_scores.mean():.4f}")
-
-    return cv_scores
-
 
 def train_and_evaluate_tree(pipe, X_train, y_train, X_test, y_test, threshold: float = 0.5):
     
@@ -166,14 +154,6 @@ def build_rf_pipeline(n_estimators=200, random_state=42):
         ("model", RandomForestClassifier(n_estimators=n_estimators, random_state=random_state))
     ])
 
-# 2. Cross-validation evaluation
-# -----------------------------
-def evaluate_cv(pipeline, X, y, cv_splits=5, scoring="roc_auc"):
-    tscv = TimeSeriesSplit(n_splits=cv_splits)
-    cv_scores = cross_val_score(pipeline, X, y, cv=tscv, scoring=scoring)
-    print(f"CV {scoring.upper()}: {cv_scores.mean():.4f}")
-    return cv_scores
-
 # -----------------------------
 # 3. Test set evaluation
 # -----------------------------
@@ -199,7 +179,7 @@ def evaluate_test(pipeline, X_train, y_train, X_test, y_test):
     """""""""""""""""""""""""""""""""""""""""""""""
     Support Vector Machine and Evaluation Modules  
     """""""""""""""""""""""""""""""""""""""""""""""
-
+from sklearn.svm import SVC
 
 # -----------------------------
 # 1. Build pipeline
