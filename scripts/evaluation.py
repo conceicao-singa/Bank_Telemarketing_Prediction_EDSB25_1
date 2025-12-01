@@ -80,4 +80,24 @@ def evaluate_model(pipe, X_train, y_train, X_test, y_test, model_name="Model", t
     plt.legend()
     plt.show()
 
+    # -----------------------------
+    # Lift Plot (Seaborn lineplot)
+    # -----------------------------
+    def compute_lift(y_true, y_proba, n_bins=10):
+        df = pd.DataFrame({"y_true": y_true, "y_proba": y_proba})
+        df = df.sort_values(by="y_proba", ascending=False).reset_index(drop=True)
+        df["bucket"] = pd.qcut(df.index, n_bins, labels=False)
+        lift = df.groupby("bucket")["y_true"].mean() / df["y_true"].mean()
+        return lift
+
+    lift_values = compute_lift(y_test, y_proba_test, n_bins=10)
+
+    plt.figure(figsize=(7, 4))
+    sns.lineplot(x=range(1, 11), y=lift_values.values, marker="o")
+    plt.title(f"{model_name} — Lift Curve (Test Set)")
+    plt.xlabel("Decile (Top Ranked Customers)")
+    plt.ylabel("Lift over Average")
+    plt.grid(True)
+    plt.show()
+
     return {"train": metrics_train, "test": metrics_test}
