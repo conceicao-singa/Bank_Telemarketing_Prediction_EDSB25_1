@@ -191,3 +191,50 @@ def build_svm_pipeline(kernel="rbf", probability=True, random_state=42):
     ])
 
 
+    """""""""""""""""""""""""""""""""""""""""""""""
+    Neural networks  Modules  
+    """""""""""""""""""""""""""""""""""""""""""""""
+    
+from sklearn.neural_network import MLPClassifier
+
+# -----------------------------
+# 1. Build pipeline
+# -----------------------------
+
+def build_mlp_pipeline(hidden_layer_sizes=(32, 16), max_iter=300, random_state=42):
+    return Pipeline([
+        ("smote", SMOTE(random_state=random_state)),
+        ("model", MLPClassifier(hidden_layer_sizes=hidden_layer_sizes,
+                                max_iter=max_iter,
+                                random_state=random_state))
+    ])
+
+    """""""""""""""""""""""""""""""""""""""""""""""
+    XGBoost Modules  
+    """""""""""""""""""""""""""""""""""""""""""""""
+from xgboost import XGBClassifier
+
+
+def build_xgb_pipeline(
+    n_estimators=300,
+    learning_rate=0.05,
+    max_depth=4,
+    subsample=0.9,
+    colsample_bytree=0.9,
+    random_state=42
+):
+    return Pipeline([
+        ("smote", SMOTE(sampling_strategy="minority", random_state=random_state)),
+        ("model", XGBClassifier(
+            objective="binary:logistic",
+            eval_metric="logloss",
+            n_estimators=n_estimators,
+            learning_rate=learning_rate,
+            max_depth=max_depth,
+            subsample=subsample,
+            colsample_bytree=colsample_bytree,
+            scale_pos_weight=1,   # balanced via SMOTE
+            random_state=random_state,
+            n_jobs=-1
+        ))
+    ])
