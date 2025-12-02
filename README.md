@@ -16,8 +16,12 @@
 
 * Produce actionable insights for strategic decision‑making.
 
- flowchart LR
-    A[Data] --> B[Cleaning]
-    B --> C[EDA]
-    C --> D[Modeling]
-    D --> E[Evaluation]
+flowchart LR
+    A[Raw Telemarketing Data] --> B[Data Cleaning]
+    B --> C[Feature Engineering]
+    C --> D[Time Series Train/Test Split<br>(Leakage-Free)]
+    D --> E[SMOTE<br>Class Balancing]
+    E --> F[Model Training<br>(LR, RF, XGBoost)]
+    F --> G[Evaluation<br>ROC-AUC, Recall, FN Analysis]
+    G --> H[Insights & Recommendations]
+
