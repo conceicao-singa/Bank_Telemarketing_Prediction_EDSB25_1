@@ -15,3 +15,9 @@
 * Minimize false negatives, improving telemarketing efficiency.
 
 * Produce actionable insights for strategic decision‑making.
+
+ flowchart LR
+    A[Data] --> B[Cleaning]
+    B --> C[EDA]
+    C --> D[Modeling]
+    D --> E[Evaluation]
