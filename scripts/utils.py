@@ -44,25 +44,46 @@ import joblib
 # -----------------------------
 # 1. Utility function to save model
 # -----------------------------
-def save_model(pipeline, model_name, folder="models"):
-    """
-    Save a trained pipeline/model into the specified folder.
-    """
-    # Ensure folder exists
-    os.makedirs(folder, exist_ok=True)
-    
-    # Build full path
-    file_path = os.path.join(folder, f"{model_name}.joblib")
-    
-    # Save pipeline
-    joblib.dump(pipeline, file_path)
-    print(f"Model saved to {file_path}")
+import os
+import joblib
 
-# -----------------------------
-# 2. Example usage after tuning
-# -----------------------------
-# Suppose you ran GridSearchCV or RandomizedSearchCV
-best_model = grid_search.best_estimator_   # or rs.best_estimator_
+def save_models(models, folder_path):
+    """
+    Save all fitted models in a dictionary to the specified folder.
 
-# Save tuned model
-save_model(best_model, "svm_tuned")
+    Parameters
+    ----------
+    models : dict
+        Dictionary of {model_name: fitted_model}.
+    folder_path : str
+        Path to the folder where models will be saved.
+    """
+    os.makedirs(folder_path, exist_ok=True)
+    for name, model in models.items():
+        file_path = os.path.join(folder_path, f"{name}.pkl")
+        joblib.dump(model, file_path)
+        print(f"✅ Saved {name} to {file_path}")
+
+
+def load_models(folder_path):
+    """
+    Load all models from the specified folder into a dictionary.
+
+    Parameters
+    ----------
+    folder_path : str
+        Path to the folder containing saved models.
+
+    Returns
+    -------
+    dict
+        Dictionary of {model_name: loaded_model}.
+    """
+    loaded = {}
+    for filename in os.listdir(folder_path):
+        if filename.endswith(".pkl"):
+            name = filename.replace(".pkl", "")
+            file_path = os.path.join(folder_path, filename)
+            loaded[name] = joblib.load(file_path)
+            print(f"✅ Loaded {name} from {file_path}")
+    return loaded
