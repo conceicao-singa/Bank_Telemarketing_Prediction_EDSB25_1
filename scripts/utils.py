@@ -36,3 +36,32 @@ def save_processed_splits(X_train, y_train, X_test, y_test, preprocessor, path: 
     test_final.to_csv(os.path.join(path, "test_processed.csv"), index=False)
 
     print(f"Processed splits saved to {path}")
+    
+      
+import joblib
+
+# -----------------------------
+# 1. Utility function to save model
+# -----------------------------
+def save_model(pipeline, model_name, folder="models"):
+    """
+    Save a trained pipeline/model into the specified folder.
+    """
+    # Ensure folder exists
+    os.makedirs(folder, exist_ok=True)
+    
+    # Build full path
+    file_path = os.path.join(folder, f"{model_name}.joblib")
+    
+    # Save pipeline
+    joblib.dump(pipeline, file_path)
+    print(f"Model saved to {file_path}")
+
+# -----------------------------
+# 2. Example usage after tuning
+# -----------------------------
+# Suppose you ran GridSearchCV or RandomizedSearchCV
+best_model = grid_search.best_estimator_   # or rs.best_estimator_
+
+# Save tuned model
+save_model(best_model, "svm_tuned")
