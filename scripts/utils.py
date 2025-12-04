@@ -65,25 +65,25 @@ def save_models(models, folder_path):
         print(f"✅ Saved {name} to {file_path}")
 
 
-def load_models(folder_path):
+def load_model(model_name, folder_path):
     """
-    Load all models from the specified folder into a dictionary.
+    Load a single model by name from the specified folder.
 
     Parameters
     ----------
+    model_name : str
+        The name of the model (without .pkl extension).
     folder_path : str
         Path to the folder containing saved models.
 
     Returns
     -------
-    dict
-        Dictionary of {model_name: loaded_model}.
+    object
+        The loaded model object.
     """
-    loaded = {}
-    for filename in os.listdir(folder_path):
-        if filename.endswith(".pkl"):
-            name = filename.replace(".pkl", "")
-            file_path = os.path.join(folder_path, filename)
-            loaded[name] = joblib.load(file_path)
-            print(f"✅ Loaded {name} from {file_path}")
-    return loaded
+    file_path = os.path.join(folder_path, f"{model_name}.pkl")
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(f"No saved model found at {file_path}")
+    model = joblib.load(file_path)
+    print(f"✅ Loaded {model_name} from {file_path}")
+    return model
