@@ -6,6 +6,10 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 import numpy as np
+import os
+
+
+
 
 sns.set(style="whitegrid")  # global seaborn style
 
@@ -178,3 +182,42 @@ def compare_models(models, X_test, y_test, save_path):
     print(f"✅ Saved model comparison to {save_path}")
 
     return comp_df
+
+
+def error_analysis_loop(data, columns, target_col="target_prediction_match", error_col="target_probability_diff", save_dir="../reports/figures"):
+    """
+    Iterate over multiple numerical/bin columns, print match rate summaries,
+    plot error distributions, and save figures.
+    
+    Parameters:
+    - data: DataFrame with error analysis data
+    - columns: list of column names to analyze
+    - target_col: column with prediction match indicator
+    - error_col: column with prediction error values
+    - save_dir: directory to save plots (default: ../reports/figures)
+    """
+    # Ensure save directory exists
+    save_dir = os.path.abspath(save_dir)
+    os.makedirs(save_dir, exist_ok=True)
+
+    for col in columns:
+        if col not in data.columns:
+            print(f"Skipping '{col}' — not found in DataFrame.")
+            continue
+
+        # --- Print summary table ---
+        summary = data.groupby(col)[target_col].mean().reset_index()
+
+        # --- Boxplot of error distribution ---
+        g = sns.catplot(data=data, x=col, y=error_col, kind="box", height=5, aspect=2)
+        plt.title(f"Prediction Error Distribution by {col}", fontsize=14, weight="bold")
+        plt.xticks(rotation=45)
+        plt.grid(axis="y", linestyle="--", alpha=0.7)
+        plt.tight_layout()
+
+        # --- Save plot ---
+        save_path = os.path.join(save_dir, f"{col}_error_analysis.png")
+        plt.savefig(save_path, dpi=300)
+        plt.close()   # close figure to avoid overlap in loop
+
+        print(f"Saved plot to: {save_path}")
