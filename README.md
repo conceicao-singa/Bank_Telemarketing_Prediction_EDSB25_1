@@ -27,19 +27,19 @@ A comprehensive machine‑learning project focused on predicting whether a custo
 
 * Produce actionable insights for strategic decision‑making.
 
-## 4. Installation
+## 3. Installation
 
-### 4.1. Prerequisites
+### 3.1. Prerequisites
 - Python 3.12 +
 
-### 4.2. Steps
+### 3.2. Steps
 
 - **Clone the repository**:
    ```bash
    git clone https://github.com/<your-username>/Bank_Telemarketing_Prediction_EDSB25_1.git
    cd Bank_Telemarketing_Prediction_EDSB25_1
     ```
-## 5. Directory Structure
+## 4. Directory Structure
 
 - **Data Directory** (`Bank_Telemarketing_Prediction_EDSB25_1/data`)
   - **`data_prep.py`**: Includes functions for preprocessing the data.
@@ -60,7 +60,7 @@ A comprehensive machine‑learning project focused on predicting whether a custo
 - **Scripts Directory** (`Bank_Telemarketing_Prediction_EDSB25_1/scripts`)
   - Contains various `.py` files for testing functions and methods before integrating them into the notebooks.
 
-## 6. Credits
+## 5. Credits
 
 - **EDSB25_1**
 
@@ -70,5 +70,5 @@ A comprehensive machine‑learning project focused on predicting whether a custo
   * João André Neves (20241487)
   * Md Haque (20241356)
 
-## 7. License
+## 6. License
 This project is licensed under the [Apache] http://www.apache.org/licenses/
