@@ -27,13 +27,6 @@ A comprehensive machine‑learning project focused on predicting whether a custo
 
 * Produce actionable insights for strategic decision‑making.
 
-
-## 3. Models and Architectures
-
-- **Simple CNN Model**: A lightweight CNN model for quick experimentation.
-- **Complex CNN Model**: A deeper custom CNN with additional layers and regularization.  
-- **Pretrained Models**: MobileNetV2 and ResNet50.
-
 ## 4. Installation
 
 ### 4.1. Prerequisites
