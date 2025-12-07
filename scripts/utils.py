@@ -87,3 +87,7 @@ def load_model(model_name, folder_path):
     model = joblib.load(file_path)
     print(f"✅ Loaded {model_name} from {file_path}")
     return model
+
+
+def clean_feature_names(feature_names, prefixes=("cat__", "num__")):
+    return [name.replace(prefixes[0], "").replace(prefixes[1], "") for name in feature_names]
